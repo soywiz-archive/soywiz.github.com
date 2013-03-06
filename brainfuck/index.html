@@ -1,0 +1,47 @@
+<html>
+<head>
+<script type="text/javascript">
+function brainfuck(code) {
+	var js = '';
+	for (var n = 0; n < code.length; n++) {
+		switch (code.charAt(n)) {
+			case '>': js += "ptr++;\n"; break;
+			case '<': js += "ptr--;\n"; break;
+			case '+': js += "mem[ptr]++;\n"; break;
+			case '-': js += "mem[ptr]--;\n"; break;
+			case '.': js += "write(String.fromCharCode(mem[ptr]));\n"; break;
+			case ',': js += "mem[ptr] = read();\n"; break;
+			case '[': js += "while (mem[ptr]) {\n"; break;
+			case ']': js += "}\n"; break;
+		}
+	}
+	
+	var output = document.getElementById('output');
+	var readBuffer = '';
+	function clear() { output.value = ''; }
+	function write(char) { if (char == '\r') return; output.value += char; if (char == '\n') output.scrollTop = 999999; }
+	function read() {
+		if (readBuffer.length == 0) {
+			readBuffer = prompt();
+			if (readBuffer === false) throw('Exit');
+			readBuffer += "\n";
+		}
+		var val = readBuffer.charCodeAt(0);
+		readBuffer = readBuffer.substr(1);
+		return val;
+	}
+	var ptr = 0;
+	var mem = new Uint8Array(new ArrayBuffer(30000));
+	clear();
+	eval(js);
+}
+</script>
+</head>
+<body>
+<h2>Code:</h2>
+<div><textarea id="code" style="width:100%;height:300px;"></textarea></div>
+<div><input type="button" value="Execute!" onclick="brainfuck(document.getElementById('code').value);" /></div>
+<h2>Output:</h2>
+<textarea id="output" style="width:100%;height:300px;"></textarea>
+</body>
+</html>
